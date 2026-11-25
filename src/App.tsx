@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { activity, metrics, series } from "./data";
+import { useEffect, useMemo, useState } from "react";
+import { loadDashboard, type DashboardData } from "./api";
+import type { Series } from "./data";
 
 function Sparkline({ points, color }: { points: number[]; color: string }) {
   const max = Math.max(...points);
@@ -15,7 +16,7 @@ function Sparkline({ points, color }: { points: number[]; color: string }) {
   );
 }
 
-function Chart() {
+function Chart({ series }: { series: Series[] }) {
   const [hover, setHover] = useState<number | null>(null);
   const all = series.flatMap((s) => s.points);
   const max = Math.max(...all) * 1.1;
@@ -77,7 +78,7 @@ function Chart() {
       </svg>
       {hover !== null && (
         <p className="chart-tip">
-          Interval {hover + 1}: this week <b>{series[0]?.points[hover]}</b> · last week{" "}
+          Interval {hover + 1}: this period <b>{series[0]?.points[hover]}</b> · baseline{" "}
           <b>{series[1]?.points[hover]}</b>
         </p>
       )}
@@ -87,7 +88,16 @@ function Chart() {
 
 export function App() {
   const [workspace, setWorkspace] = useState("All workspaces");
-  const total = useMemo(() => activity.filter((a) => workspace === "All workspaces" || a.segment === workspace).reduce((n, a) => n + a.value, 0), [workspace]);
+  const [data, setData] = useState<DashboardData | null>(null);
+
+  useEffect(() => {
+    void loadDashboard().then(setData);
+  }, []);
+
+  const metrics = data?.metrics ?? [];
+  const series = data?.series ?? [];
+  const activity = data?.activity ?? [];
+  const total = useMemo(() => activity.filter((a) => workspace === "All workspaces" || a.segment === workspace).reduce((n, a) => n + a.value, 0), [activity, workspace]);
   return (
     <div className="app">
       <header className="topbar">
@@ -111,7 +121,7 @@ export function App() {
           <button key={n} className={`nav-item ${i === 0 ? "active" : ""}`}>{n}</button>
         ))}
         <div className="sidebar-foot">
-          <span className="dot" /> Streaming live
+          <span className="dot" /> {data?.source === "live" ? "Streaming live" : "Demo mode"}
         </div>
       </aside>
       <main className="main">
@@ -120,7 +130,12 @@ export function App() {
             <p className="eyebrow">Analytics workspace</p>
             <h1>Overview</h1>
           </div>
-          <p className="updated">Updated just now · {total.toLocaleString()} events in view</p>
+          <p className="updated">
+            <span className={`source ${data?.source ?? "demo"}`}>
+              {data?.source === "live" ? "LIVE API" : "DEMO DATA"}
+            </span>
+            Updated just now · {total.toLocaleString()} events in view
+          </p>
         </div>
         <div className="metric-grid">
           {metrics.map((m) => (
@@ -131,7 +146,9 @@ export function App() {
             </div>
           ))}
         </div>
-        <div className="card"><Chart /></div>
+        <div className="card">
+          {series.length ? <Chart series={series} /> : <p className="chart-title">Loading analytics…</p>}
+        </div>
         <div className="card table-card">
           <p className="chart-title">Segments</p>
           <table>

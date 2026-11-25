@@ -53,7 +53,10 @@ button, select { font: inherit; }
 .page-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; gap: 16px; }
 .eyebrow { font: 500 10px "JetBrains Mono", monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); margin: 0 0 6px; }
 h1 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
-.updated { font: 11px "JetBrains Mono", monospace; color: var(--muted); margin: 0; }
+.updated { font: 11px "JetBrains Mono", monospace; color: var(--muted); margin: 0; display: flex; align-items: center; gap: 10px; }
+.source { font: 10px "JetBrains Mono", monospace; letter-spacing: .1em; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--line); }
+.source.live { color: var(--green); border-color: rgba(94,234,212,.35); background: rgba(94,234,212,.08); }
+.source.demo { color: #fbbf24; border-color: rgba(251,191,36,.35); background: rgba(251,191,36,.08); }
 .card { background: linear-gradient(160deg, var(--panel), var(--panel-2)); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
 .metric-label { font: 11px "JetBrains Mono", monospace; color: var(--muted); margin: 0 0 10px; }
