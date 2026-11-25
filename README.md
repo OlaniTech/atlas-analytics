@@ -57,6 +57,11 @@ curl -X POST http://localhost:4000/v1/events -H "Authorization: Bearer rly_live_
 
 See `.env.example`. Never commit a real key — these are local demo defaults only.
 
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) — data flow, API adapter, source states and deployment
+- [Decisions & tradeoffs](docs/DECISIONS.md) — why it's built this way and what I'd change at scale
+
 ## Tests and build
 
 ```cmd
